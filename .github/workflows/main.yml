@@ -1,0 +1,127 @@
+name: Flutter CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.27.3
+
+      # Step 3: Get dependencies
+      - name: Get dependencies
+        run: flutter pub get
+
+      # Step 3: Run Flutter Analyze
+      - name: Analyze Code
+        run: flutter analyze
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: analyze
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.27.3
+          
+      # Step 3: Get dependencies
+      - name: Get dependencies
+        run: flutter pub get
+
+      # Step 3: Run Flutter Test
+      - name: Run Tests
+        run: flutter test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.27.3
+          
+      # Step 3: Get dependencies
+      - name: Get dependencies
+        run: flutter pub get
+
+      # Step 4: Configure GitHub Pages
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Step 5: Build Flutter Web
+      - name: Build Flutter Web
+        id: build
+        run: flutter build web --release
+
+      # Step 6: Upload GitHub Pages artifact
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        with:
+          path: ./build/web
+
+      # Step 4: Upload production-ready build files
+      # - name: Upload production-ready build files
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: production-files
+      #     path: ./build/web
+
+      # Step 5: Deploy Build to a New Branch
+      # - name: Deploy to gh-pages Branch
+      #   run: |
+      #     git config --global user.name "${{ github.actor }}"
+      #     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      #     git branch -D gh-pages || true
+      #     git checkout -b gh-pages
+      #     cp -r build/web/* .
+      #     git add .
+      #     git commit -m "Deploy new build"
+      #     git push origin gh-pages --force
+      
+  deploy:
+    name: Deploy
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
