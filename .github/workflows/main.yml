@@ -19,7 +19,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.27.3
+          flutter-version: 3.29.0
 
       # Step 3: Get dependencies
       - name: Get dependencies
@@ -43,7 +43,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.27.3
+          flutter-version: 3.29.0
           
       # Step 3: Get dependencies
       - name: Get dependencies
@@ -67,7 +67,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.27.3
+          flutter-version: 3.29.0
           
       # Step 3: Get dependencies
       - name: Get dependencies
@@ -89,25 +89,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
           path: ./build/web
-
-      # Step 4: Upload production-ready build files
-      # - name: Upload production-ready build files
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: production-files
-      #     path: ./build/web
-
-      # Step 5: Deploy Build to a New Branch
-      # - name: Deploy to gh-pages Branch
-      #   run: |
-      #     git config --global user.name "${{ github.actor }}"
-      #     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      #     git branch -D gh-pages || true
-      #     git checkout -b gh-pages
-      #     cp -r build/web/* .
-      #     git add .
-      #     git commit -m "Deploy new build"
-      #     git push origin gh-pages --force
       
   deploy:
     name: Deploy
