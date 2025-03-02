@@ -10,8 +10,8 @@ on:
       - main
 
 jobs:
-  analyze:
-    name: Analyze
+  analyze-main-pull-request:
+    name: Analyze on main Pull Request
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -34,11 +34,11 @@ jobs:
       - name: Analyze Code
         run: flutter analyze
 
-  test:
-    name: Test
+  test-main-pull-request:
+    name: Test on main Pull Request
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: analyze
+    needs: analyze-main-pull-request
     steps:
       # Step 1: Check out the repository
       - name: Checkout Code
@@ -59,11 +59,11 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-  build-pr:
-    name: Build on Pull Request
+  build-main-pull-request:
+    name: Build on main Pull Request
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: test  # Only needed for PRs
+    needs: test-main-pull-request
     steps:
       # Step 1: Check out the repository
       - name: Checkout Code
@@ -97,8 +97,8 @@ jobs:
         with:
           path: ./build/web
 
-  build-push:
-    name: Build on Push
+  build-main-push:
+    name: Build on main Push
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
@@ -134,8 +134,8 @@ jobs:
         with:
           path: ./build/web
       
-  deploy:
-    name: Deploy
+  deploy-main-push:
+    name: Deploy on main Push
     permissions:
       contents: read
       pages: write
@@ -143,7 +143,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build-push
+    needs: build-main-push
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
