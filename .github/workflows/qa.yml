@@ -7,7 +7,7 @@ on:
 
 jobs:
   analyze-qa-pull-request:
-    name: Analyze in QA Pull Request
+    name: Analyze on QA Pull Request
     runs-on: ubuntu-latest
     steps:
       # Step 1: Check out the repository
@@ -30,7 +30,7 @@ jobs:
         run: flutter analyze
 
   test-qa-pull-request:
-    name: Test in QA Pull Request
+    name: Test on QA Pull Request
     runs-on: ubuntu-latest
     needs: analyze-qa-pull-request
     steps:
@@ -54,7 +54,7 @@ jobs:
         run: flutter test
 
   build-qa-pull-request:
-    name: Build in QA Pull Request
+    name: Build on QA Pull Request
     runs-on: ubuntu-latest
     needs: test-qa-pull-request
     steps:
