@@ -59,11 +59,48 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-  build:
-    name: Build
+  build-pr:
+    name: Build on Pull Request
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     needs: test  # Only needed for PRs
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.29.0
+          
+      # Step 3: Get dependencies
+      - name: Get dependencies
+        run: flutter pub get
+
+      # Step 4: Configure GitHub Pages
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Step 5: Build Flutter Web
+      - name: Build Flutter Web
+        id: build
+        run: flutter build web --release
+
+      # Step 6: Upload GitHub Pages artifact
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        with:
+          path: ./build/web
+
+  build-push:
+    name: Build on Push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       # Step 1: Check out the repository
       - name: Checkout Code
@@ -106,7 +143,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
+    needs: build-push
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
