@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  push:
+    branches:
+      - main
+
 jobs:
   analyze:
     name: Analyze
@@ -101,6 +105,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       # Step 1: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
