@@ -80,22 +80,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Step 4: Configure GitHub Pages
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
-      # Step 5: Build Flutter Web
+      # Step 4: Build Flutter Web
       - name: Build Flutter Web
         id: build
         run: flutter build web --release
-
-      # Step 6: Upload GitHub Pages artifact
-      - name: Upload static files as artifact
-        id: deployment
-        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
-        with:
-          path: ./build/web
 
   build-main-push:
     name: Build on main Push
