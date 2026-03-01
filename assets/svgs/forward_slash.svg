@@ -1,0 +1,20 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="200"
+    height="200"
+    viewBox="63.5 20 73 160"
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+    role="presentation">
+    <defs>
+        <style>
+            /* Ensures the fill color for elements with data-color="1" is black */
+            [data-color="1"] { fill: #000000; }
+        </style>
+    </defs>
+    <g>
+        <path d="M125.8 20l10.7 3.7L74.4 180l-10.9-3.7L125.8 20z"
+            fill="#000001"
+            data-color="1" />
+    </g>
+</svg>
