@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,69 +55,176 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  late VideoPlayerController _controllerA;
+  late VideoPlayerController _controllerB;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  // Track which controller is currently the active visible background
+  bool _isPlayerAActive = true;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePlayers();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    if (!_isInitialized) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: Stack(
+        children: [
+          // Video Player B Layer
+          Positioned.fill(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _controllerB.value.size.width,
+                height: _controllerB.value.size.height,
+                child: VideoPlayer(_controllerB),
+              ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+          ),
+
+          // Video Player A Layer with Animated Opacity for Cross-Fading
+          Positioned.fill(
+            child: AnimatedOpacity(
+              opacity: _isPlayerAActive ? 1.0 : 0.0,
+              duration: const Duration(
+                milliseconds: 1200,
+              ), // Smooth transition duration
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _controllerA.value.size.width,
+                  height: _controllerA.value.size.height,
+                  child: VideoPlayer(_controllerA),
+                ),
+              ),
+            ),
+          ),
+
+          // Dark overlay to ensure text readability
+          // Positioned.fill(
+          //   child: Container(color: Colors.black..withValues(alpha: 0.8)),
+          // ),
+
+          const Positioned.fill(
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'AAYUSH CHAUBE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 4,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'LAUNCHING SOON',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controllerA.removeListener(_videoAListener);
+    _controllerB.removeListener(_videoBListener);
+    _controllerA.dispose();
+    _controllerB.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializePlayers() async {
+    // Replace with your asset path or remote URL
+    _controllerA = VideoPlayerController.asset(
+      'assets/videos/pexels_videos_4703.mp4',
+    );
+    _controllerB = VideoPlayerController.asset(
+      'assets/videos/pexels_videos_4703.mp4',
+    );
+    _controllerA.setVolume(0.0);
+    _controllerB.setVolume(0.0);
+
+    await Future.wait([_controllerA.initialize(), _controllerB.initialize()]);
+
+    // Set up listeners to monitor the timing for the cross-fade
+    _controllerA.addListener(_videoAListener);
+    _controllerB.addListener(_videoBListener);
+
+    // Start playing the primary video
+    _controllerA.play();
+
+    setState(() {
+      _isInitialized = true;
+    });
+  }
+
+  void _videoAListener() {
+    if (!_controllerA.value.isInitialized) return;
+
+    final position = _controllerA.value.position;
+    final duration = _controllerA.value.duration;
+
+    // Define a overlap/fade window (e.g., 1.5 seconds before the video ends)
+    const fadeDuration = Duration(milliseconds: 1500);
+    final triggerTime = duration - fadeDuration;
+
+    if (_isPlayerAActive && position >= triggerTime) {
+      setState(() {
+        _isPlayerAActive = false; // Cross-fade to Player B
+      });
+      _controllerB.seekTo(Duration.zero);
+      _controllerB.play();
+    }
+
+    // Reset Player A once it completely finishes
+    if (position >= duration) {
+      _controllerA.pause();
+    }
+  }
+
+  void _videoBListener() {
+    if (!_controllerB.value.isInitialized) return;
+
+    final position = _controllerB.value.position;
+    final duration = _controllerB.value.duration;
+
+    const fadeDuration = Duration(milliseconds: 1500);
+    final triggerTime = duration - fadeDuration;
+
+    if (!_isPlayerAActive && position >= triggerTime) {
+      setState(() {
+        _isPlayerAActive = true; // Cross-fade back to Player A
+      });
+      _controllerA.seekTo(Duration.zero);
+      _controllerA.play();
+    }
+
+    // Reset Player B once it completely finishes
+    if (position >= duration) {
+      _controllerB.pause();
+    }
   }
 }
