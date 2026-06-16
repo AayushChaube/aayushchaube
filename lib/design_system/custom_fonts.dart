@@ -22,7 +22,7 @@ class CustomFonts {
     fontWeight: FontWeight.bold,
     height: 1.4,
   );
-  static const TextStyle  = TextStyle(
+  static const TextStyle font3 = TextStyle(
     fontFamily: 'Poppins',
     fontSize: 27.0,
     fontStyle: FontStyle.normal,
