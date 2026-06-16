@@ -1,6 +1,9 @@
-import 'package:aayushchaube/themes/custom_color_extension.dart';
-import 'package:aayushchaube/themes/custom_fonts.dart';
-import 'package:aayushchaube/themes/custom_themes.dart';
+import 'package:aayushchaube/constants/assets_path.dart';
+import 'package:aayushchaube/constants/string_constants.dart';
+import 'package:aayushchaube/design_system/custom_color_extension.dart';
+import 'package:aayushchaube/design_system/custom_colors.dart';
+import 'package:aayushchaube/design_system/custom_fonts.dart';
+import 'package:aayushchaube/design_system/custom_themes.dart';
 import 'package:flutter/material.dart';
 
 class AboutSection extends StatelessWidget {
@@ -161,15 +164,44 @@ class AboutSection extends StatelessWidget {
                     color:
                         customColorExtension?.profileCardBackground ??
                         CustomThemes.lightColorScheme.secondaryContainer,
-                    // child: Column(
-                    //   children: [
-                    //     Container(
-                    //       color: ,
-                    //     ),
-                    //   ],
-                    // ),
                     height: 525.8,
                     width: 375,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 43, bottom: 34),
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(
+                              AssetsPath.backgroundProfileImageJPG,
+                            ),
+                            foregroundImage: AssetImage(
+                              AssetsPath.foregroundProfileImageJPG,
+                            ),
+                            onBackgroundImageError: (exception, stackTrace) {
+                              // TODO:  Show snackbar
+                            },
+                            onForegroundImageError: (exception, stackTrace) {
+                              // TODO:  Show snackbar
+                            },
+                            radius: 125,
+                            child: Text(
+                              StringConstants.initials,
+                              style: Theme.of(context).textTheme.displayLarge
+                                  ?.copyWith(color: CustomColors.color0),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          StringConstants.title,
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        // Container(
+                        //   height: 205,
+                        //   width: 205,
+                        //   color: CustomColors.color15,
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
               ),

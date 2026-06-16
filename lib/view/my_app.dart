@@ -1,5 +1,5 @@
 import 'package:aayushchaube/constants/string_constants.dart';
-import 'package:aayushchaube/themes/custom_themes.dart';
+import 'package:aayushchaube/design_system/custom_themes.dart';
 import 'package:aayushchaube/view/home_page.dart';
 import 'package:flutter/material.dart';
 

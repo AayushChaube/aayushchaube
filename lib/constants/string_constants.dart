@@ -5,4 +5,5 @@ class StringConstants {
   static const String resume = 'RESUME';
   static const String projects = 'PROJECTS';
   static const String contact = 'CONTACT';
+  static const String initials = 'AC';
 }

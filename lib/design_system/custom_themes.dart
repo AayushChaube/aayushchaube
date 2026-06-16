@@ -1,6 +1,6 @@
-import 'package:aayushchaube/themes/custom_color_extension.dart';
-import 'package:aayushchaube/themes/custom_colors.dart';
-import 'package:aayushchaube/themes/custom_fonts.dart';
+import 'package:aayushchaube/design_system/custom_color_extension.dart';
+import 'package:aayushchaube/design_system/custom_colors.dart';
+import 'package:aayushchaube/design_system/custom_fonts.dart';
 import 'package:flutter/material.dart';
 
 class CustomThemes {

@@ -1,5 +1,5 @@
-import 'package:aayushchaube/themes/custom_fonts.dart';
-import 'package:aayushchaube/themes/custom_themes.dart';
+import 'package:aayushchaube/design_system/custom_fonts.dart';
+import 'package:aayushchaube/design_system/custom_themes.dart';
 import 'package:flutter/material.dart';
 
 class MenuItem extends StatefulWidget {
